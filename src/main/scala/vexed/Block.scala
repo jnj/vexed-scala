@@ -4,7 +4,7 @@ object Block {
   val WALL = '#'
 }
 
-sealed class Block(val symbol: Char) {
+sealed case class Block(val symbol: Char) {
   import Block._
 
   def isWall = symbol == WALL
