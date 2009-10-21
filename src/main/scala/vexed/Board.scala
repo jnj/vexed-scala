@@ -18,7 +18,8 @@ class MapBoard(layout: String) {
       val (char,col) = u
       char match {
         case ' ' => ()
-        case c => contents = contents + ((col, row) -> new Block(c))
+        case '#' => contents = contents + ((col, row) -> Wall())
+        case c => contents = contents + ((col, row) -> Moveable(c))
       }
     }
   }
@@ -28,7 +29,8 @@ class MapBoard(layout: String) {
     
     for (row <- 0 until height; col <- 0 until width) {
       val c = contents.get(col, row) match {
-        case Some(Block(c)) => c 
+        case Some(Wall()) => '#'
+        case Some(Moveable(c)) => c 
         case None => ' '
       }
       
