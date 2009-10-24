@@ -10,4 +10,20 @@ class BoardSuite extends FunSuite {
     val board = new MapBoard(layout)
     assert(layout === board.toString)
   }
+  
+  test("board is solved if there are no moveable pieces") {
+    val layout = 
+      "# #\n" + 
+      "###"
+    val board = new MapBoard(layout)
+    assert(board.isSolved)
+  }
+  
+  test("board is solveable if there are no singleton groups") {
+    val layout =
+      "#B B#\n" +
+      "#####"
+    val board = new MapBoard(layout)
+    assert(board.isSolveable)
+  }
 }

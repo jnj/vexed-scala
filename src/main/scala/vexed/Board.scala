@@ -1,8 +1,10 @@
 package vexed
 
+import scala.collection.mutable.HashMap
+
 trait Board {
   def getAvailableMoves: List[Move]
-  def isSolved = getAvailableMoves.size == 0
+  def isSolved
   def isSolveable: Boolean
   def applyMove(move: Move): Board 
 }
@@ -21,6 +23,30 @@ class MapBoard(layout: String) {
         case '#' => contents = contents + ((col, row) -> Wall())
         case c => contents = contents + ((col, row) -> Moveable(c))
       }
+    }
+  }
+
+  def isSolveable = {
+    val symbolCounts = new HashMap[Char, Int]()
+    contents.values.foreach { block =>
+      block match {
+        case Wall() => ()
+        case Moveable(c) => {
+          val count = symbolCounts.get(c) match {
+            case None => 1
+            case Some(n) => n + 1
+          }
+          symbolCounts += (c -> count)
+        }
+      }
+    }
+    symbolCounts.values.forall { i => i > 1 }
+  }
+  
+  def isSolved = contents.values.forall { block =>
+    block match {
+      case Wall() => true
+      case _ => false
     }
   }
   
