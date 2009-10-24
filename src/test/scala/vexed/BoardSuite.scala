@@ -26,4 +26,13 @@ class BoardSuite extends FunSuite {
     val board = new MapBoard(layout)
     assert(board.isSolveable)
   }
+
+  test("board is not solveable if there are singleton groups") {
+    val layout =
+      "#A  #\n" +
+      "#B B#\n" +
+      "#####"
+    val board = new MapBoard(layout)
+    assert(!board.isSolveable)
+  }
 }
