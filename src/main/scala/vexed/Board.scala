@@ -1,9 +1,10 @@
 package vexed
 
 import scala.collection.mutable.HashMap
+import vexed.Direction._
 
 trait Board {
-  def getAvailableMoves: List[Move]
+  def getMoves: List[Move]
   def isSolved
   def isSolveable: Boolean
   def applyMove(move: Move): Board 
@@ -24,6 +25,20 @@ class MapBoard(layout: String) {
         case c => contents = contents + ((col, row) -> Moveable(c))
       }
     }
+  }
+
+  def getMoves = {
+    val moves = new scala.collection.mutable.ListBuffer[Move]
+
+    occupiedPositions.foreach { case (col, row) =>
+      if (!contents.contains(Right(col, row))) {
+        moves += new Move(col, row, Right)
+      }
+      if (!contents.contains(Left(col, row))) {
+        moves += new Move(col, row, Left)
+      }
+    }
+    moves
   }
 
   def isSolveable = {
@@ -50,6 +65,17 @@ class MapBoard(layout: String) {
     }
   }
   
+  def occupiedPositions = {
+    val filtered = contents.filter { e => 
+      e match {
+        case (_, Moveable(c)) => true
+        case _ => false
+      }
+    }
+    
+    filtered.map { e => e._1 }
+  }
+
   override def toString = {
     val buf = new StringBuilder()
     

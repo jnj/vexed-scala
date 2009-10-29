@@ -1,9 +1,9 @@
 package vexed
 
 object Direction {
-  val LEFT = new Direction(-1, 0)
-  val RIGHT = new Direction(1, 0)
-  val DOWN = new Direction(0, 1)
+  val Left = new Direction(-1, 0)
+  val Right = new Direction(1, 0)
+  val Down = new Direction(0, 1)
 }
 
 class Direction(val columnDelta: Int, val rowDelta: Int) {

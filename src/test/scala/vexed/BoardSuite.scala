@@ -1,4 +1,5 @@
 import org.scalatest.FunSuite
+import scala.collection.immutable.HashSet
 import vexed.MapBoard
 
 class BoardSuite extends FunSuite {
@@ -34,5 +35,20 @@ class BoardSuite extends FunSuite {
       "#####"
     val board = new MapBoard(layout)
     assert(!board.isSolveable)
+  }
+  
+  test("occupiedPositions returns only positions with moveables") {
+    val layout =
+      "#A #\n" +
+      "####"
+    val board = new MapBoard(layout)
+    val expected = new HashSet + ((1,0))
+    assertEqualDiscountingOrder(expected, board.occupiedPositions)
+  }
+
+  private def assertEqualDiscountingOrder[T](a: Iterable[T], b: Iterable[T]) {
+    val s = new HashSet[T] ++ a
+    val t = new HashSet[T] ++ b
+    assert(s === t)    
   }
 }
