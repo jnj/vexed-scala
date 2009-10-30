@@ -38,6 +38,7 @@ class MapBoard(layout: String) {
         moves += new Move(col, row, Left)
       }
     }
+
     moves
   }
 
