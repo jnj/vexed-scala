@@ -9,6 +9,10 @@ class Move(val column: Int, val row: Int, val direction: Direction) {
     }
   }
 
+  def orig = (column, row)
+    
+  def dest = direction(column, row)
+
   override def toString = "[(" + column + "," + row + ") " + direction + "]"
 
   override def hashCode = {
