@@ -60,6 +60,32 @@ class BoardSuite extends FunSuite {
     assertEqualDiscountingOrder(expected, board.getMoves)
   }
 
+  test("applyMove moves piece") {
+    val layout =
+      "#A #\n" +
+      "####"
+    val board = new MapBoard(layout)
+    val expectedLayout = 
+      "# A#\n" + 
+      "####"
+    val expectedBoard = new MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+  }
+
+  test("applyMove causes piece to fall") {
+    val layout = 
+      "#A #\n" +
+      "#  #\n" + 
+      "####"
+    val board = new MapBoard(layout)
+    val expectedLayout = 
+      "#  #\n" +
+      "# A#\n" + 
+      "####"
+    val expectedBoard = new MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+  }
+
   private def assertEqualDiscountingOrder[T](a: Iterable[T], b: Iterable[T]) {
     val s = new HashSet[T] ++ a
     val t = new HashSet[T] ++ b

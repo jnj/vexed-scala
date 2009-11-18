@@ -30,11 +30,11 @@ class MapBoard(layout: String) {
     val moves = new ListBuffer[Move]
 
     occupiedPositions.foreach { case (col, row) =>
-      if (!contents.contains(Right(col, row))) {
+      if (!blockAt(Right(col, row))) {
         moves += new Move(col, row, Right)
       }
 
-      if (!contents.contains(Left(col, row))) {
+      if (!blockAt(Left(col, row))) {
         moves += new Move(col, row, Left)
       }
     }
@@ -70,6 +70,8 @@ class MapBoard(layout: String) {
     newBoard
   }
 
+  private def blockAt(p: (Int, Int)) = contents.contains(p)
+
   private def copy = {
     new MapBoard(toString)
   }
@@ -78,7 +80,7 @@ class MapBoard(layout: String) {
     occupiedPositions.toList.sort {_>=_}
   }
 
-  private def occupiedPositions = {
+  private [vexed] def occupiedPositions = {
     contents.filter {_._2.isInstanceOf[Moveable]}.map {_._1}
   }
 
@@ -115,9 +117,21 @@ class MapBoard(layout: String) {
   }
 
   private def findLandingPosition(p: (Int, Int)) = {
-    (1, 2)
+    val column = for (row <- (p._2 + 1) until height) yield (p._1, row)
+    val endPoint = column.findIndexOf { contents.contains(_) }
+    if (endPoint == 0)
+      p
+    else
+      column(endPoint - 1)
   }
 
+  private def hasWallAt(column: Int, row: Int) = {
+    contents.get((column, row)) match {
+      case Some(Wall()) => true
+      case _ => false
+    }
+  }
+                                
   private def clearGroups = {
     val groups = findGroups
     contents = contents -- groups
@@ -166,5 +180,21 @@ class MapBoard(layout: String) {
     }      
     
     buf.toString
+  }
+  
+  override def equals(that: Any) = {
+    that match {
+      case b: MapBoard =>
+        contents == b.contents && width == b.width && height == b.height
+      case _ => false
+    }
+  }
+  
+  override def hashCode = {
+    var x = 17
+    x = 31 * x + width.hashCode
+    x = 31 * x + height.hashCode
+    x = 31 * x + contents.hashCode
+    x
   }
 }
