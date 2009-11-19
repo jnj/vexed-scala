@@ -25,4 +25,7 @@ class Groups {
   def nonSingletons: List[(Int, Int)] = {
     idsToGroups.filter {_._2.size > 1}.map {_._2}.toList.flatten
   }
+  
+  override def toString =
+    "Groups{idsToGroups=" + idsToGroups + ", reversedMap=" + reversedMap + "}"
 }

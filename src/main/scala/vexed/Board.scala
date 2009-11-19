@@ -147,7 +147,7 @@ class MapBoard(layout: String) {
 
       val matchingNeighbors = neighbors.filter { q => 
         contents.get(q) match {
-          case Moveable(c) if c == block.symbol => true
+          case Some(Moveable(c)) if c == block.symbol => true
           case _ => false
         }
       }
@@ -159,7 +159,7 @@ class MapBoard(layout: String) {
         groups.addToNewGroup(p)
       }
     }
-    
+
     groups.nonSingletons
   }
 

@@ -86,6 +86,38 @@ class BoardSuite extends FunSuite {
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
+  test("applyMove causes piece to fall until it hits other block") {
+    val layout = 
+      "#A #\n" +
+      "## #\n" +
+      "# B#\n" +
+      "####"
+    val board = new MapBoard(layout)
+    val expectedLayout = 
+      "#  #\n" +
+      "##A#\n" +
+      "# B#\n" +
+      "####"
+    val expectedBoard = new MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+  }
+
+  test("groups vanish") {
+    val layout = 
+      "#A #\n" +
+      "## #\n" +
+      "# A#\n" +
+      "####"
+    val board = new MapBoard(layout)
+    val expectedLayout = 
+      "#  #\n" +
+      "## #\n" +
+      "#  #\n" +
+      "####"
+    val expectedBoard = new MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+  }
+
   private def assertEqualDiscountingOrder[T](a: Iterable[T], b: Iterable[T]) {
     val s = new HashSet[T] ++ a
     val t = new HashSet[T] ++ b
