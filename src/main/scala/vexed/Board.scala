@@ -6,12 +6,17 @@ import vexed.Direction._
 
 trait Board {
   def getMoves: List[Move]
-  def isSolved
+  def isSolved: Boolean
   def isSolveable: Boolean
-  def applyMove(move: Move): Board 
+  def applyMove(move: Move): Board
+  def moveHistory: MoveHistory
 }
 
-class MapBoard(layout: String) {
+object MapBoard {
+  def forLayout(layout: String) = new MapBoard(layout, new MoveHistory)
+}
+
+class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   private var contents = Map[(Int, Int), Block]()
   private val width = layout.lines.next.size
   private val height = layout.lines.toList.size
@@ -39,7 +44,7 @@ class MapBoard(layout: String) {
       }
     }
 
-    moves
+    moves.toList
   }
 
   def isSolveable = {
@@ -73,7 +78,7 @@ class MapBoard(layout: String) {
   private def blockAt(p: (Int, Int)) = contents.contains(p)
 
   private def copy = {
-    new MapBoard(toString)
+    new MapBoard(toString, moveHistory.copy)
   }
   
   private def occupiedPositionsBottomUp = {
@@ -91,7 +96,7 @@ class MapBoard(layout: String) {
   }
 
   private def recordMove(move: Move) = {
-    //moveHistory.add(move)
+    moveHistory.add(move)
   }
   
   private def doMove(m: Move) = {
@@ -125,13 +130,6 @@ class MapBoard(layout: String) {
       column(endPoint - 1)
   }
 
-  private def hasWallAt(column: Int, row: Int) = {
-    contents.get((column, row)) match {
-      case Some(Wall()) => true
-      case _ => false
-    }
-  }
-                                
   private def clearGroups = {
     val groups = findGroups
     contents = contents -- groups

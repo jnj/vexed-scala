@@ -11,7 +11,7 @@ class BoardSuite extends FunSuite {
       "#   #\n" +
       "# A #\n" +
       "#####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     assert(layout === board.toString)
   }
   
@@ -19,7 +19,7 @@ class BoardSuite extends FunSuite {
     val layout = 
       "# #\n" + 
       "###"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     assert(board.isSolved)
   }
   
@@ -27,7 +27,7 @@ class BoardSuite extends FunSuite {
     val layout =
       "#B B#\n" +
       "#####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     assert(board.isSolveable)
   }
 
@@ -36,7 +36,7 @@ class BoardSuite extends FunSuite {
       "#A  #\n" +
       "#B B#\n" +
       "#####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     assert(!board.isSolveable)
   }
   
@@ -44,7 +44,7 @@ class BoardSuite extends FunSuite {
     val layout =
       "#A #\n" +
       "####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     val expected = new HashSet + ((1,0))
     assertEqualDiscountingOrder(expected, board.occupiedPositions)
   }
@@ -54,7 +54,7 @@ class BoardSuite extends FunSuite {
       "# A #\n" + 
       "# B #\n" + 
       "#####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     val expected = List(new Move(2, 0, Right), new Move(2, 0, Left),
                         new Move(2, 1, Right), new Move(2, 1, Left))
     assertEqualDiscountingOrder(expected, board.getMoves)
@@ -64,11 +64,11 @@ class BoardSuite extends FunSuite {
     val layout =
       "#A #\n" +
       "####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     val expectedLayout = 
       "# A#\n" + 
       "####"
-    val expectedBoard = new MapBoard(expectedLayout)
+    val expectedBoard = MapBoard.forLayout(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -77,12 +77,12 @@ class BoardSuite extends FunSuite {
       "#A #\n" +
       "#  #\n" + 
       "####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     val expectedLayout = 
       "#  #\n" +
       "# A#\n" + 
       "####"
-    val expectedBoard = new MapBoard(expectedLayout)
+    val expectedBoard = MapBoard.forLayout(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -92,13 +92,13 @@ class BoardSuite extends FunSuite {
       "## #\n" +
       "# B#\n" +
       "####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     val expectedLayout = 
       "#  #\n" +
       "##A#\n" +
       "# B#\n" +
       "####"
-    val expectedBoard = new MapBoard(expectedLayout)
+    val expectedBoard = MapBoard.forLayout(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -108,13 +108,13 @@ class BoardSuite extends FunSuite {
       "## #\n" +
       "# A#\n" +
       "####"
-    val board = new MapBoard(layout)
+    val board = MapBoard.forLayout(layout)
     val expectedLayout = 
       "#  #\n" +
       "## #\n" +
       "#  #\n" +
       "####"
-    val expectedBoard = new MapBoard(expectedLayout)
+    val expectedBoard = MapBoard.forLayout(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 

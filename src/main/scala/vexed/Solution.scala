@@ -1,7 +1,5 @@
 package vexed
 
-
-trait Solution {
-  def getMoveCount: Int
-  def getMoveHistory: MoveHistory
+class Solution(val moveHistory: MoveHistory, boardCount: Int) {
+  override def toString = "Solution{moveHistory=" + moveHistory + ", " + boardCount + " boards}"
 }
