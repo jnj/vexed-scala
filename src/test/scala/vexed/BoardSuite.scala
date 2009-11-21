@@ -118,6 +118,22 @@ class BoardSuite extends FunSuite {
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
+  test("proper sequence of moves will solve board") {
+    val layout = 
+      "#  D  #\n" +
+      "#  A  #\n" + 
+      "# DC  #\n" + 
+      "# AB  #\n" +
+      "#ABC C#\n" +
+      "#######"
+    var board = MapBoard.forLayout(layout)
+    board = board.applyMove(new Move(3, 1, Left))
+    board = board.applyMove(new Move(2, 1, Left))
+    board = board.applyMove(new Move(3, 1, Left))
+    board = board.applyMove(new Move(3, 2, Right))
+    assert(board.isSolved, "board not solved: \n" + board)
+  }
+
   private def assertEqualDiscountingOrder[T](a: Iterable[T], b: Iterable[T]) {
     val s = new HashSet[T] ++ a
     val t = new HashSet[T] ++ b
