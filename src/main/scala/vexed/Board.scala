@@ -148,11 +148,13 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
           case Some(Moveable(c)) if c == block.symbol => true
           case _ => false
         }
-      }
+      }.sort {_>=_}
 
       if (matchingNeighbors.size > 0) {
-        val q = matchingNeighbors(0)
-        groups.addToGroup(groups.groupOf(q), p)
+        val q = matchingNeighbors.last
+        val group = groups.groupOf(q)
+        groups.addToGroup(group, p)
+        matchingNeighbors.foreach { groups.addToGroup(group, _) }
       } else {
         groups.addToNewGroup(p)
       }
