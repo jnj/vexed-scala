@@ -148,7 +148,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
           case Some(Moveable(c)) if c == block.symbol => true
           case _ => false
         }
-      }.sort {_>=_}
+      }
 
       if (matchingNeighbors.size > 0) {
         val q = matchingNeighbors.last
