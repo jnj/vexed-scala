@@ -25,8 +25,8 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     line.elements.zipWithIndex.foreach { case (char, col) =>
       char match {
         case ' ' => ()
-        case '#' => contents = contents + ((col, row) -> Wall())
-        case c => contents = contents + ((col, row) -> Moveable(c))
+        case '#' => contents += ((col, row) -> Wall())
+        case c => contents += ((col, row) -> Moveable(c))
       }
     }
   }
@@ -61,7 +61,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
       }
     }
 
-    symbolCounts.values.forall { i => i > 1 }
+    symbolCounts.values.forall {_ > 1}
   }
   
   def isSolved = contents.values.forall {
@@ -124,10 +124,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   private def findLandingPosition(p: (Int, Int)) = {
     val column = for (row <- (p._2 + 1) until height) yield (p._1, row)
     val endPoint = column.findIndexOf { contents.contains(_) }
-    if (endPoint == 0)
-      p
-    else
-      column(endPoint - 1)
+    if (endPoint == 0) p else column(endPoint - 1)
   }
 
   private def clearGroups = {
@@ -143,8 +140,8 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
       val block = contents(p).asInstanceOf[Moveable]
       val neighbors = List(Right(p._1, p._2), Down(p._1, p._2))
 
-      val matchingNeighbors = neighbors.filter { q => 
-        contents.get(q) match {
+      val matchingNeighbors = neighbors.filter {
+        contents.get(_) match {
           case Some(Moveable(c)) if c == block.symbol => true
           case _ => false
         }
