@@ -1,6 +1,14 @@
 package vexed
 
 object Vexed {
+
+  def time(action: => Unit): Long = {
+    val start = java.lang.System.currentTimeMillis
+    action
+    val stop = java.lang.System.currentTimeMillis
+    stop - start
+  }
+
   def main(argv: Array[String]) = {
     val layout = 
       "#  D  #\n" +
@@ -11,8 +19,8 @@ object Vexed {
       "#######"
     val board = MapBoard.forLayout(layout)
     val solver = new BfsSolver
-    val t0 = java.lang.System.currentTimeMillis
-    println(solver.solve(board))
-    println((java.lang.System.currentTimeMillis - t0) + " ms")
+    val time_diff = time { println(solver.solve(board)) }
+    
+    println(time_diff + " ms")
   }
 }
