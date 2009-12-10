@@ -33,8 +33,8 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
 
   def getMoves = {
     val positions = occupiedPositions
-    val goLeft = (p: (Int, Int)) => new Move(p._1, p._2, Right)
-    val goRight = (p: (Int, Int)) => new Move(p._1, p._2, Left)
+    val goRight = (p: (Int, Int)) => new Move(p._1, p._2, Right)
+    val goLeft = (p: (Int, Int)) => new Move(p._1, p._2, Left)
     val isValidMove = (move: Move) => !blockAt(move.dest)
     (positions.map(goLeft) ++ positions.map(goRight)).filter(isValidMove).toList
   }
