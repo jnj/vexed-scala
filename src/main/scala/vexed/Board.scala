@@ -40,20 +40,11 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   def isSolveable = {
-    val symbolCounts = new HashMap[Char, Int]()
-
-    contents.values.foreach {
-      case Wall() => ()
-      case Moveable(c) => {
-        val count = symbolCounts.get(c) match {
-          case None => 1
-          case Some(n) => n + 1
-        }
-        symbolCounts += (c -> count)
-      }
-    }
-
-    symbolCounts.values.forall {_ > 1}
+    val moveables = contents.values.filter {_.isInstanceOf[Moveable]}
+    val blocks = moveables.map {_.asInstanceOf[Moveable]}
+    val map = Map[Char, Int]().withDefault {_ => 0}
+    val counts = blocks.foldLeft(map) {(m, b) => m + (b.symbol -> (m(b.symbol) + 1))}
+    counts.values.forall {_ > 1}
   }
   
   def isSolved = contents.values.forall {
