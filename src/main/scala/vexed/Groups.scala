@@ -13,7 +13,7 @@ class Groups {
   def addToNewGroup(p: (Int, Int)) = addToGroup(nextGroupNum, p)
   
   def addToGroup(group: Int, p: (Int, Int)) = {
-    idsToGroups += (group -> (idsToGroups(group) + p))
+    idsToGroups += (group -> (p :: idsToGroups(group)))
     reversedMap += (p -> group)
   }
   

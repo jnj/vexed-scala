@@ -9,7 +9,7 @@ trait Solver {
 class BfsSolver {
   def solve(rootBoard: Board): Solution = {
     var seenBoards = Set[Board]()
-    var queue = new Queue(rootBoard)
+    var queue = Queue(rootBoard)
 
     while (!queue.isEmpty) {
       val (board, q) = queue.dequeue
@@ -29,7 +29,7 @@ class BfsSolver {
   
   private def explore(board: Board, queue: Queue[Board]) = {
     var q = queue
-    board.getMoves.foreach { q += board.applyMove(_) }
+    board.getMoves.foreach { m => q = q.enqueue(board.applyMove(m)) }
     q
   }
 }

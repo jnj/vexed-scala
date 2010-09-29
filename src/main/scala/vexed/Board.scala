@@ -21,14 +21,16 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   private val width = layout.lines.next.size
   private val height = layout.lines.toList.size
 
-  layout.lines.zipWithIndex.foreach { case (line, row) =>
-    line.elements.zipWithIndex.foreach { case (char, col) =>
-      char match {
-        case ' ' => ()
-        case '#' => contents += ((col, row) -> Wall())
-        case c => contents += ((col, row) -> Moveable(c))
+  layout.lines.zipWithIndex.foreach { 
+    case (line, row) =>
+      line.iterator .zipWithIndex.foreach { 
+        case (char, col) =>
+          char match {
+            case ' ' => ()
+            case '#' => contents += ((col, row) -> Wall())
+            case c => contents += ((col, row) -> Moveable(c))
+          }
       }
-    }
   }
 
   def getMoves = {
@@ -40,11 +42,11 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   def isSolveable = {
-    val moveables = contents.values.filter {_.isInstanceOf[Moveable]}
-    val blocks = moveables.map {_.asInstanceOf[Moveable]}
-    val map = Map[Char, Int]().withDefault {_ => 0}
+    val moveables = contents.values.filter(_.isInstanceOf[Moveable])
+    val blocks = moveables.map(_.asInstanceOf[Moveable])
+    val map = Map[Char, Int]().withDefault(_ => 0)
     val counts = blocks.foldLeft(map) {(m, b) => m + (b.symbol -> (m(b.symbol) + 1))}
-    counts.values.forall {_ > 1}
+    counts.values.forall(_ > 1)
   }
   
   def isSolved = contents.values.forall {
@@ -65,11 +67,11 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
   
   private def occupiedPositionsBottomUp = {
-    occupiedPositions.toList.sort {_>=_}
+    occupiedPositions.toList.sorted.reverse
   }
 
   private [vexed] def occupiedPositions = {
-    contents.filter {_._2.isInstanceOf[Moveable]}.map {_._1}
+    contents.filter(_._2.isInstanceOf[Moveable]).keys
   }
 
   private def doRecordedMove(move: Move) = {
@@ -106,7 +108,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
 
   private def findLandingPosition(p: (Int, Int)) = {
     val column = for (row <- (p._2 + 1) until height) yield (p._1, row)
-    val endPoint = column.findIndexOf { contents.contains(_) }
+    val endPoint = column.findIndexOf(contents.contains(_))
     if (endPoint == 0) p else column(endPoint - 1)
   }
 
