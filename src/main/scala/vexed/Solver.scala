@@ -8,7 +8,7 @@ trait Solver {
 
 class BfsSolver {
   def solve(rootBoard: Board): Solution = {
-    var seenBoards = Set[Board]()
+    var seenBoards = Set.empty[Board]
     var queue = Queue(rootBoard)
 
     while (!queue.isEmpty) {
@@ -24,12 +24,14 @@ class BfsSolver {
       }
     }
       
-    throw new java.lang.IllegalArgumentException("unsolveable board")
+    throw new IllegalArgumentException("unsolveable board")
   }
   
   private def explore(board: Board, queue: Queue[Board]) = {
     var q = queue
-    board.getMoves.foreach { m => q = q.enqueue(board.applyMove(m)) }
+    board.getMoves.foreach {
+        m => q = q.enqueue(board.applyMove(m))
+    }
     q
   }
 }
