@@ -1,6 +1,7 @@
 *~
-lib_managed
-project/build/target
-project/boot
+.idea
+.idea_modules
+.history
+lib
 target
 TAGS
