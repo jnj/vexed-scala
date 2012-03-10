@@ -97,7 +97,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   private def settleAndClear = {
-    do settle() while (clearGroups)
+    do settle() while (clearOneGroup)
   }
 
   private def settle() {
@@ -115,37 +115,43 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     if (endPoint === 0) p else column(endPoint - 1)
   }
 
-  private def clearGroups = {
-    val groups = findGroups
-    contents = contents -- groups
-    groups.size > 0
+  private def clearOneGroup = {
+    val group = findOneGroup
+
+    group.foreach {
+      g => contents = contents -- g
+    }
+
+    group.isDefined
   }
 
-  private def findGroups = {
+  private def findOneGroup = {
     val groups = new Groups
 
-    occupiedPositionsBottomUp.foreach { p => 
-      val block = contents(p).asInstanceOf[Moveable]
-      val neighbors = List(Right(p._1, p._2), Down(p._1, p._2))
+    occupiedPositionsBottomUp.foreach {
+      p => {
+        val block = contents(p).asInstanceOf[Moveable]
+        val neighbors = List(Right(p._1, p._2), Down(p._1, p._2))
 
-      val matchingNeighbors = neighbors.filter {
-        contents.get(_) match {
-          case Some(Moveable(c)) if c === block.symbol => true
-          case _ => false
+        val matchingNeighbors = neighbors.filter {
+          contents.get(_) match {
+            case Some(Moveable(c)) if c === block.symbol => true
+            case _ => false
+          }
         }
-      }
 
-      if (matchingNeighbors.size > 0) {
-        val q = matchingNeighbors.last
-        val group = groups.groupOf(q)
-        groups.addToGroup(group, p)
-        matchingNeighbors.foreach { groups.addToGroup(group, _) }
-      } else {
-        groups.addToNewGroup(p)
+        if (matchingNeighbors.size > 0) {
+          val q = matchingNeighbors.last
+          val group = groups.groupOf(q)
+          groups.addToGroup(group, p)
+          matchingNeighbors.foreach { groups.addToGroup(group, _) }
+        } else {
+          groups.addToNewGroup(p)
+        }
       }
     }
 
-    groups.nonSingletons
+    groups.firstNonSingletonGroup
   }
 
   override def toString = {

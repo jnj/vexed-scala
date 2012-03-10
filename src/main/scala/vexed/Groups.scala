@@ -23,10 +23,10 @@ class Groups {
 
   def groupOf(p: (Int, Int)) = reversedMap(p)
 
-  def nonSingletons = {
-    idsToGroups.filter {_._2.size > 1}.map {_._2}.toList.flatten
-  }
-  
+  def firstNonSingletonGroup = nonSingletons.headOption
+
+  def nonSingletons = idsToGroups.filter {_._2.size > 1}.map {_._2}.toList
+
   override def toString =
     "Groups{idsToGroups=" + idsToGroups + ", reversedMap=" + reversedMap + "}"
 }

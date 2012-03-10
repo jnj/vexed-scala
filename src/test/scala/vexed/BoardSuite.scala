@@ -9,7 +9,7 @@ class BoardSuite extends FunSuite {
       "#   #\n" +
       "# A #\n" +
       "#####"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     assert(layout === board.toString)
   }
   
@@ -17,7 +17,7 @@ class BoardSuite extends FunSuite {
     val layout = 
       "# #\n" + 
       "###"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     assert(board.isSolved)
   }
   
@@ -25,7 +25,7 @@ class BoardSuite extends FunSuite {
     val layout =
       "#B B#\n" +
       "#####"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     assert(board.isSolveable)
   }
 
@@ -34,7 +34,7 @@ class BoardSuite extends FunSuite {
       "#A  #\n" +
       "#B B#\n" +
       "#####"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     assert(!board.isSolveable)
   }
   
@@ -42,7 +42,7 @@ class BoardSuite extends FunSuite {
     val layout =
       "#A #\n" +
       "####"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     val expected = new HashSet + ((1,0))
     assertEqualIgnoreOrder(expected, board.occupiedPositions)
   }
@@ -52,9 +52,9 @@ class BoardSuite extends FunSuite {
       "# A #\n" + 
       "# B #\n" + 
       "#####"
-    val board = MapBoard.apply(layout)
-    val expected = List(new Move(2, 0, Right), new Move(2, 0, Left),
-                        new Move(2, 1, Right), new Move(2, 1, Left))
+    val board = MapBoard(layout)
+    val expected = List(Move(2, 0, Right), Move(2, 0, Left),
+                        Move(2, 1, Right), Move(2, 1, Left))
     assertEqualIgnoreOrder(expected, board.getMoves)
   }
 
@@ -62,93 +62,105 @@ class BoardSuite extends FunSuite {
     val layout =
       "#A #\n" +
       "####"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     val expectedLayout = 
       "# A#\n" + 
       "####"
-    val expectedBoard = MapBoard.apply(expectedLayout)
-    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+    val expectedBoard = MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(Move(1, 0, Right)))
   }
 
   test("applyMove causes piece to fall") {
-    val layout = 
+    val layout =
       "#A #\n" +
-      "#  #\n" + 
-      "####"
-    val board = MapBoard.apply(layout)
-    val expectedLayout = 
       "#  #\n" +
-      "# A#\n" + 
       "####"
-    val expectedBoard = MapBoard.apply(expectedLayout)
-    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+    val board = MapBoard(layout)
+    val expectedLayout =
+      "#  #\n" +
+      "# A#\n" +
+      "####"
+    val expectedBoard = MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(Move(1, 0, Right)))
   }
 
   test("applyMove causes piece to fall until it hits other block") {
-    val layout = 
+    val layout =
       "#A #\n" +
       "## #\n" +
       "# B#\n" +
       "####"
-    val board = MapBoard.apply(layout)
-    val expectedLayout = 
+    val board = MapBoard(layout)
+    val expectedLayout =
       "#  #\n" +
       "##A#\n" +
       "# B#\n" +
       "####"
-    val expectedBoard = MapBoard.apply(expectedLayout)
-    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+    val expectedBoard = MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(Move(1, 0, Right)))
   }
 
   test("groups vanish") {
-    val layout = 
+    val layout =
       "#A #\n" +
       "## #\n" +
       "# A#\n" +
       "####"
-    val board = MapBoard.apply(layout)
-    val expectedLayout = 
+    val board = MapBoard(layout)
+    val expectedLayout =
       "#  #\n" +
       "## #\n" +
       "#  #\n" +
       "####"
-    val expectedBoard = MapBoard.apply(expectedLayout)
-    assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
+    val expectedBoard = MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(Move(1, 0, Right)))
+  }
+
+  test("all blocks fall before any groups vanish") {
+    val layout =
+        "#  D  #\n" +
+        "#  B  #\n" +
+        "# DC  #\n" +
+        "# AB  #\n" +
+        "#ABC C#\n" +
+        "########"
+    val board = MapBoard(layout).applyMove(Move(3, 2, Right))
+    assert(board.isSolved, "board should be solved: \n" + board)
   }
 
   test("proper sequence of moves will solve board") {
-    val layout = 
+    val layout =
       "#  D  #\n" +
-      "#  A  #\n" + 
-      "# DC  #\n" + 
+      "#  A  #\n" +
+      "# DC  #\n" +
       "# AB  #\n" +
       "#ABC C#\n" +
       "#######"
-    var board = MapBoard.apply(layout)
-    board = board.applyMove(new Move(3, 1, Left))
+    var board = MapBoard(layout)
+    board = board.applyMove(Move(3, 1, Left))
 
-    board = board.applyMove(new Move(2, 1, Left))
-    board = board.applyMove(new Move(3, 1, Left))
-    board = board.applyMove(new Move(3, 2, Right))
+    board = board.applyMove(Move(2, 1, Left))
+    board = board.applyMove(Move(3, 1, Left))
+    board = board.applyMove(Move(3, 2, Right))
     assert(board.isSolved, "board not solved: \n" + board)
   }
 
   test("corner groups will vanish") {
-    val layout = 
-      "# A  #\n" + 
+    val layout =
+      "# A  #\n" +
       "# #  #\n" +
       "# A  #\n" +
-      "#A#  #\n" + 
+      "#A#  #\n" +
       "######"
-    val board = MapBoard.apply(layout)
+    val board = MapBoard(layout)
     val expectedLayout =
-      "#    #\n" + 
+      "#    #\n" +
       "# #  #\n" +
       "#    #\n" +
       "# #  #\n" +
       "######"
-    val expectedBoard = MapBoard.apply(expectedLayout)
-    assert(expectedBoard === board.applyMove(new Move(2, 0, Left)))
+    val expectedBoard = MapBoard(expectedLayout)
+    assert(expectedBoard === board.applyMove(Move(2, 0, Left)))
   }
 
   private def assertEqualIgnoreOrder[T](a: Iterable[T], b: Iterable[T]) {

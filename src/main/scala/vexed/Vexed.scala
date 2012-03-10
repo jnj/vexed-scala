@@ -11,12 +11,12 @@ object Vexed {
 
   def main(argv: Array[String]) {
     val layout = 
-      "#  D  #\n" +
-      "#  A  #\n" + 
-      "# DC  #\n" + 
-      "# AB  #\n" +
-      "#ABC C#\n" +
-      "#######"
+      "#  D E #\n" +
+      "#  A # #\n" +
+      "# DC   #\n" +
+      "# AB   #\n" +
+      "#ABC C #\n" +
+      "########"
     val board = MapBoard.apply(layout)
     val solver = new BfsSolver
     val time_diff = time { println(solver.solve(board)) }
