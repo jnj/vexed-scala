@@ -3,15 +3,13 @@ package vexed
 import org.scalatest.FunSuite
 import scala.collection.immutable.HashSet
 
-import vexed.Direction._
-
 class BoardSuite extends FunSuite {
   test("can initialize board with layout string") {
     val layout = 
       "#   #\n" +
       "# A #\n" +
       "#####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     assert(layout === board.toString)
   }
   
@@ -19,7 +17,7 @@ class BoardSuite extends FunSuite {
     val layout = 
       "# #\n" + 
       "###"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     assert(board.isSolved)
   }
   
@@ -27,7 +25,7 @@ class BoardSuite extends FunSuite {
     val layout =
       "#B B#\n" +
       "#####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     assert(board.isSolveable)
   }
 
@@ -36,7 +34,7 @@ class BoardSuite extends FunSuite {
       "#A  #\n" +
       "#B B#\n" +
       "#####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     assert(!board.isSolveable)
   }
   
@@ -44,7 +42,7 @@ class BoardSuite extends FunSuite {
     val layout =
       "#A #\n" +
       "####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expected = new HashSet + ((1,0))
     assertEqualIgnoreOrder(expected, board.occupiedPositions)
   }
@@ -54,7 +52,7 @@ class BoardSuite extends FunSuite {
       "# A #\n" + 
       "# B #\n" + 
       "#####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expected = List(new Move(2, 0, Right), new Move(2, 0, Left),
                         new Move(2, 1, Right), new Move(2, 1, Left))
     assertEqualIgnoreOrder(expected, board.getMoves)
@@ -64,11 +62,11 @@ class BoardSuite extends FunSuite {
     val layout =
       "#A #\n" +
       "####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expectedLayout = 
       "# A#\n" + 
       "####"
-    val expectedBoard = MapBoard.forLayout(expectedLayout)
+    val expectedBoard = MapBoard.apply(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -77,12 +75,12 @@ class BoardSuite extends FunSuite {
       "#A #\n" +
       "#  #\n" + 
       "####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expectedLayout = 
       "#  #\n" +
       "# A#\n" + 
       "####"
-    val expectedBoard = MapBoard.forLayout(expectedLayout)
+    val expectedBoard = MapBoard.apply(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -92,13 +90,13 @@ class BoardSuite extends FunSuite {
       "## #\n" +
       "# B#\n" +
       "####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expectedLayout = 
       "#  #\n" +
       "##A#\n" +
       "# B#\n" +
       "####"
-    val expectedBoard = MapBoard.forLayout(expectedLayout)
+    val expectedBoard = MapBoard.apply(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -108,13 +106,13 @@ class BoardSuite extends FunSuite {
       "## #\n" +
       "# A#\n" +
       "####"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expectedLayout = 
       "#  #\n" +
       "## #\n" +
       "#  #\n" +
       "####"
-    val expectedBoard = MapBoard.forLayout(expectedLayout)
+    val expectedBoard = MapBoard.apply(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(1, 0, Right)))
   }
 
@@ -126,7 +124,7 @@ class BoardSuite extends FunSuite {
       "# AB  #\n" +
       "#ABC C#\n" +
       "#######"
-    var board = MapBoard.forLayout(layout)
+    var board = MapBoard.apply(layout)
     board = board.applyMove(new Move(3, 1, Left))
 
     board = board.applyMove(new Move(2, 1, Left))
@@ -142,14 +140,14 @@ class BoardSuite extends FunSuite {
       "# A  #\n" +
       "#A#  #\n" + 
       "######"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val expectedLayout =
       "#    #\n" + 
       "# #  #\n" +
       "#    #\n" +
       "# #  #\n" +
       "######"
-    val expectedBoard = MapBoard.forLayout(expectedLayout)
+    val expectedBoard = MapBoard.apply(expectedLayout)
     assert(expectedBoard === board.applyMove(new Move(2, 0, Left)))
   }
 

@@ -3,9 +3,11 @@ package vexed
 import scala.collection.mutable.ListBuffer
 
 class Moves {
-  var moves: ListBuffer[Move] = ListBuffer( )
+  var moves: ListBuffer[Move] = ListBuffer.empty
 
-  def add(move: Move) = moves.append(move)
+  def add(move: Move) {
+    moves.append(move)
+  }
 
   def addAll(movesToAdd: Moves) = moves ++= movesToAdd.moves
 

@@ -1,8 +1,8 @@
 package vexed
 
 class Groups {
-  var idsToGroups = Map[Int, List[(Int, Int)]]().withDefault {_ => List()}
-  var reversedMap = Map[(Int, Int), Int]()
+  var idsToGroups = Map.empty[Int, List[(Int, Int)]].withDefault {_ => List.empty}
+  var reversedMap = Map.empty[(Int, Int), Int]
   var groupNum = 0
   
   def nextGroupNum = {
@@ -10,9 +10,11 @@ class Groups {
     groupNum
   }
 
-  def addToNewGroup(p: (Int, Int)) = addToGroup(nextGroupNum, p)
+  def addToNewGroup(p: (Int, Int)) {
+    addToGroup(nextGroupNum, p)
+  }
   
-  def addToGroup(group: Int, p: (Int, Int)) = {
+  def addToGroup(group: Int, p: (Int, Int)) {
     idsToGroups += (group -> (p :: idsToGroups(group)))
     reversedMap += (p -> group)
   }

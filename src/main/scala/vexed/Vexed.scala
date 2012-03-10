@@ -9,7 +9,7 @@ object Vexed {
     stop - start
   }
 
-  def main(argv: Array[String]) = {
+  def main(argv: Array[String]) {
     val layout = 
       "#  D  #\n" +
       "#  A  #\n" + 
@@ -17,7 +17,7 @@ object Vexed {
       "# AB  #\n" +
       "#ABC C#\n" +
       "#######"
-    val board = MapBoard.forLayout(layout)
+    val board = MapBoard.apply(layout)
     val solver = new BfsSolver
     val time_diff = time { println(solver.solve(board)) }
     

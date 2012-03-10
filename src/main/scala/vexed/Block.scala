@@ -1,5 +1,5 @@
 package vexed
 
-abstract class Block()
-sealed case class Moveable(val symbol: Char) extends Block
-sealed case class Wall() extends Block
+sealed abstract class Block
+case class Moveable(symbol: Char) extends Block
+case object Wall extends Block

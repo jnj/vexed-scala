@@ -1,9 +1,5 @@
 package vexed
 
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.ListBuffer
-import vexed.Direction._
-
 trait Board {
   def getMoves: List[Move]
   def isSolved: Boolean
@@ -13,13 +9,13 @@ trait Board {
 }
 
 object MapBoard {
-  def forLayout(layout: String) = new MapBoard(layout, new MoveHistory)
+  def apply(layout: String) = new MapBoard(layout, new MoveHistory)
 }
 
 class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
-  private var contents = Map[(Int, Int), Block]()
-  private val width = layout.lines.next.size
-  private val height = layout.lines.toList.size
+  private var contents = Map.empty[(Int, Int), Block]
+  private val width = layout.lines.toTraversable.head.size
+  private val height = layout.lines.size
 
   layout.lines.zipWithIndex.foreach { 
     case (line, row) =>
@@ -27,7 +23,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
         case (char, col) =>
           char match {
             case ' ' => ()
-            case '#' => contents += ((col, row) -> Wall())
+            case '#' => contents += ((col, row) -> Wall)
             case c => contents += ((col, row) -> Moveable(c))
           }
       }
@@ -50,7 +46,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
   
   def isSolved = contents.values.forall {
-    case Wall() => true
+    case Wall => true
     case _ => false
   }
 
@@ -80,24 +76,24 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     settleAndClear
   }
 
-  private def recordMove(move: Move) = {
+  private def recordMove(move: Move) {
     moveHistory.add(move)
   }
   
-  private def doMove(m: Move) = {
+  private def doMove(m: Move) {
     move(m.orig, m.dest)
   }
 
-  private def move(src: (Int, Int), dst: (Int, Int)) = {
+  private def move(src: (Int, Int), dst: (Int, Int)) {
     contents += (dst -> contents.get(src).get)
     contents -= src
   }
 
   private def settleAndClear = {
-    do settle while (clearGroups)
+    do settle() while (clearGroups)
   }
 
-  private def settle = {
+  private def settle() {
     occupiedPositionsBottomUp.foreach { p =>
       val landingPos = findLandingPosition(p)
       if (landingPos != p) {
@@ -108,7 +104,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
 
   private def findLandingPosition(p: (Int, Int)) = {
     val column = for (row <- (p._2 + 1) until height) yield (p._1, row)
-    val endPoint = column.findIndexOf(contents.contains(_))
+    val endPoint = column.indexWhere(contents.contains)
     if (endPoint == 0) p else column(endPoint - 1)
   }
 
@@ -146,12 +142,12 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   override def toString = {
-    val buf = new StringBuilder()
+    val buf = new StringBuilder
     
     for (row <- 0 until height; col <- 0 until width) {
       val c = contents.get(col, row) match {
-        case Some(Wall()) => '#'
-        case Some(Moveable(c)) => c 
+        case Some(Wall) => '#'
+        case Some(Moveable(m)) => m
         case None => ' '
       }
       
