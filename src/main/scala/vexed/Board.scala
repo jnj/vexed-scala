@@ -47,7 +47,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   def isSolveable = {
     val moveables = contents.values.filter(_.isInstanceOf[Moveable])
     val blocks = moveables.map(_.asInstanceOf[Moveable])
-    val map = Map[Char, Int]().withDefault(_ => 0)
+    val map = Map.empty[Char, Int].withDefault(_ => 0)
     val counts = blocks.foldLeft(map) {(m, b) => m + (b.symbol -> (m(b.symbol) + 1))}
     counts.values.forall(_ > 1)
   }
@@ -74,7 +74,9 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   private [vexed] def occupiedPositions = {
-    contents.filter(_._2.isInstanceOf[Moveable]).keys
+    contents.collect {
+      case (p, m@Moveable(_)) => (p -> m)
+    }.keys 
   }
 
   private def doRecordedMove(move: Move) = {
@@ -110,7 +112,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   private def findLandingPosition(p: (Int, Int)) = {
-    val column = for (row <- (p._2 + 1) until height) yield (p._1, row)
+    val column = ((p._2 + 1) until height).map((p._1, _))
     val endPoint = column.indexWhere(contents.contains)
     if (endPoint === 0) p else column(endPoint - 1)
   }
@@ -156,18 +158,22 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
 
   override def toString = {
     val buf = new StringBuilder
-    
-    for (row <- 0 until height; col <- 0 until width) {
-      val c = contents.get(col, row) match {
-        case Some(Wall) => '#'
-        case Some(Moveable(m)) => m
-        case None => ' '
+
+    (0 until height).foreach {
+      row => (0 until width).foreach {
+        col => {
+          val c = contents.get(col, row) match {
+            case Some(Wall) => '#'
+            case Some(Moveable(m)) => m
+            case None => ' '
+          }
+
+          buf.append(c)
+
+          if (col === width - 1 && row < height - 1)
+            buf.append("\n")
+        }
       }
-      
-      buf.append(c)
-      
-      if (col === width - 1 && row < height - 1)
-        buf.append("\n")
     }      
     
     buf.toString
