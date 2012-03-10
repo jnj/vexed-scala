@@ -44,7 +44,7 @@ class BoardSuite extends FunSuite {
       "####"
     val board = MapBoard(layout)
     val expected = new HashSet + ((1,0))
-    assertEqualIgnoreOrder(expected, board.occupiedPositions)
+    assertEqualIgnoreOrder(expected, board.occupiedPositions.keys)
   }
 
   test("getMoves returns all possible moves") {

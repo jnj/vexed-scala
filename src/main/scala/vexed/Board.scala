@@ -37,7 +37,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   def getMoves = {
-    val positions = occupiedPositions
+    val positions = occupiedPositions.keys
     val goRight = (p: (Int, Int)) => new Move(p._1, p._2, Right)
     val goLeft = (p: (Int, Int)) => new Move(p._1, p._2, Left)
     val isValidMove = (move: Move) => !blockAt(move.dest)
@@ -45,10 +45,9 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   def isSolveable = {
-    val moveables = contents.values.filter(_.isInstanceOf[Moveable])
-    val blocks = moveables.map(_.asInstanceOf[Moveable])
+    val moveables = contents.values.collect { case m@Moveable(_) => m }
     val map = Map.empty[Char, Int].withDefault(_ => 0)
-    val counts = blocks.foldLeft(map) {(m, b) => m + (b.symbol -> (m(b.symbol) + 1))}
+    val counts = moveables.foldLeft(map) {(m, b) => m + (b.symbol -> (m(b.symbol) + 1))}
     counts.values.forall(_ > 1)
   }
   
@@ -70,13 +69,13 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
   
   private def occupiedPositionsBottomUp = {
-    occupiedPositions.toList.sorted.reverse
+    occupiedPositions.toList.sortBy(_._1).reverse
   }
 
   private [vexed] def occupiedPositions = {
     contents.collect {
       case (p, m@Moveable(_)) => (p -> m)
-    }.keys 
+    }
   }
 
   private def doRecordedMove(move: Move) = {
@@ -103,7 +102,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
 
   private def settle() {
-    occupiedPositionsBottomUp.foreach { p =>
+    occupiedPositionsBottomUp.map(_._1).foreach { p =>
       val landingPos = findLandingPosition(p)
       if (landingPos != p) {
         move(p, landingPos)
@@ -131,8 +130,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     val groups = new Groups
 
     occupiedPositionsBottomUp.foreach {
-      p => {
-        val block = contents(p).asInstanceOf[Moveable]
+      case (p, block) => {
         val neighbors = List(Right(p._1, p._2), Down(p._1, p._2))
 
         val matchingNeighbors = neighbors.filter {
