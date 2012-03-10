@@ -1,5 +1,8 @@
 package vexed
 
+import scalaz.Scalaz._
+import scalaz.Equal
+
 trait Board {
   def getMoves: List[Move]
   def isSolved: Boolean
@@ -13,6 +16,10 @@ object MapBoard {
 }
 
 class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
+  implicit val equal = new Equal[Block] {
+    def equal(a1: Block, a2: Block) = a1 == a2
+  }
+  
   private var contents = Map.empty[(Int, Int), Block]
   private val width = layout.lines.toTraversable.head.size
   private val height = layout.lines.size
@@ -105,7 +112,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   private def findLandingPosition(p: (Int, Int)) = {
     val column = for (row <- (p._2 + 1) until height) yield (p._1, row)
     val endPoint = column.indexWhere(contents.contains)
-    if (endPoint == 0) p else column(endPoint - 1)
+    if (endPoint === 0) p else column(endPoint - 1)
   }
 
   private def clearGroups = {
@@ -123,7 +130,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
 
       val matchingNeighbors = neighbors.filter {
         contents.get(_) match {
-          case Some(Moveable(c)) if c == block.symbol => true
+          case Some(Moveable(c)) if c === block.symbol => true
           case _ => false
         }
       }
@@ -153,7 +160,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
       
       buf.append(c)
       
-      if (col == width - 1 && row < height - 1)
+      if (col === width - 1 && row < height - 1)
         buf.append("\n")
     }      
     
@@ -162,8 +169,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   
   override def equals(that: Any) = {
     that match {
-      case b: MapBoard =>
-        contents == b.contents && width == b.width && height == b.height
+      case (b: MapBoard) => contents === b.contents && width === b.width && height === b.height
       case _ => false
     }
   }
