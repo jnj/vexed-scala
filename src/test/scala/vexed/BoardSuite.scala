@@ -116,7 +116,7 @@ class BoardSuite extends FunSuite {
     assert(expectedBoard === board.applyMove(Move(1, 0, Right)))
   }
 
-  test("all blocks fall before any groups vanish") {
+  test("at most one group is cleared before allowing the blocks to fall again") {
     val layout =
         "#  D  #\n" +
         "#  B  #\n" +
