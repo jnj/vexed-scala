@@ -23,8 +23,7 @@ class Groups {
 
   def groupOf(p: (Int, Int)) = reversedMap(p)
 
-  // compiler gets confused w/o return type here
-  def nonSingletons: List[(Int, Int)] = {
+  def nonSingletons = {
     idsToGroups.filter {_._2.size > 1}.map {_._2}.toList.flatten
   }
   
