@@ -16,11 +16,13 @@ object MapBoard {
 }
 
 class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
+  type Position = (Int, Int)
+
   implicit val equal = new Equal[Block] {
     def equal(a1: Block, a2: Block) = a1 == a2
   }
   
-  private var contents = Map.empty[(Int, Int), Block]
+  private var contents = Map.empty[Position, Block]
   private val width = layout.lines.toTraversable.head.size
   private val height = layout.lines.size
 
@@ -38,8 +40,8 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
 
   def getMoves = {
     val positions = occupiedPositions.keys
-    val goRight = (p: (Int, Int)) => new Move(p._1, p._2, Right)
-    val goLeft = (p: (Int, Int)) => new Move(p._1, p._2, Left)
+    val goRight = (p: Position) => new Move(p._1, p._2, Right)
+    val goLeft = (p: Position) => new Move(p._1, p._2, Left)
     val isValidMove = (move: Move) => !blockAt(move.dest)
     (positions.map(goLeft) ++ positions.map(goRight)).filter(isValidMove).toList
   }
@@ -62,7 +64,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     newBoard
   }
 
-  private def blockAt(p: (Int, Int)) = contents.contains(p)
+  private def blockAt(p: Position) = contents.contains(p)
 
   private def copy = {
     new MapBoard(toString, moveHistory.copy)
@@ -92,7 +94,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     move(m.orig, m.dest)
   }
 
-  private def move(src: (Int, Int), dst: (Int, Int)) {
+  private def move(src: Position, dst: Position) {
     contents += (dst -> contents.get(src).get)
     contents -= src
   }
@@ -110,7 +112,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     }
   }
 
-  private def findLandingPosition(p: (Int, Int)) = {
+  private def findLandingPosition(p: Position) = {
     val column = ((p._2 + 1) until height).map((p._1, _))
     val endPoint = column.indexWhere(contents.contains)
     if (endPoint === 0) p else column(endPoint - 1)
@@ -120,7 +122,7 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
     val group = findOneGroup
 
     group.foreach {
-      g => contents = contents -- g
+      contents --= _
     }
 
     group.isDefined
@@ -185,10 +187,8 @@ class MapBoard(layout: String, val moveHistory: MoveHistory) extends Board {
   }
   
   override def hashCode = {
-    var x = 17
-    x = 31 * x + width.hashCode
-    x = 31 * x + height.hashCode
-    x = 31 * x + contents.hashCode
-    x
+    Seq(width, height, contents).foldLeft(17) {
+      case (hash, i) => 31 * hash + i.hashCode
+    }
   }
 }
