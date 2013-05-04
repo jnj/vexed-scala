@@ -15,7 +15,7 @@ object Vexed {
       "#  A # #\n" +
       "# DC   #\n" +
       "# AB   #\n" +
-      "#ABC C #\n" +
+      "#ABC CE#\n" +
       "########"
     val board = MapBoard.apply(layout)
     val solver = new BfsSolver
